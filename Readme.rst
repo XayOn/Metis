@@ -16,6 +16,20 @@ This package contains a cookiecutter that will set up a few things for you:
 - Set up tox with python3.5 (add more if you want!)
 - Add travis config, github goodies and readthedocs config
 
+Usage
+-----
+
+First, get `cookiecutter <https://github.com/audreyr/cookiecutter>`_.::
+
+    pip install cookiecutter
+
+
+Now, execute it and answer its questions::
+
+    cookiecutter https://github.com/XayOn/Metis
+
+And voilá, your github repository will be created and with the first push done.
+
 TODO
 ----
 
