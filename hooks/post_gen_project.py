@@ -40,7 +40,8 @@ def create_travis():
     # TODO: Not doing it right now... requires a GH access token with
     # travis enabled. And that requires about the same user interaction as
     # setting up the project...
-    input("Please, manually create a project on travis-ci.com/")
+    input("Please, manually create a project "
+          "on travis-ci.com and coveralls.io")
 
 
 def quickstart_sphinx():
