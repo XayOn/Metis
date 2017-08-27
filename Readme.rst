@@ -21,4 +21,4 @@ TODO
 
 - Documentation skeleton
 - Auto-convert your ``behave`` tests to github issues as user stories
-- Auto-configure travis and readthedocs
+- Auto-setup project on travis and readthedocs
