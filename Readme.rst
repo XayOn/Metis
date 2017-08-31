@@ -33,6 +33,5 @@ And voilá, your github repository will be created and with the first push done.
 TODO
 ----
 
-- Documentation skeleton
 - Auto-convert your ``behave`` tests to github issues as user stories
 - Auto-setup project on travis and readthedocs
