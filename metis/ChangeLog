@@ -1,6 +1,10 @@
 CHANGES
 =======
 
+* Touch
+* Updated readme
+* Fixed a few issues with template
+* Added initial metis package
 * Added badges
 * Added coveralls.io
 * Added usage
