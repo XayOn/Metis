@@ -46,7 +46,12 @@ def create_travis():
 
 def quickstart_sphinx():
     """Quickstart the documentation and make another commit so RTD gets it."""
-    subprocess.check_call('sphinx-quickstart'.split())
+    subprocess.check_call(['sphinx-quickstart', '-q', '-p',
+                           '{{cookiecutter.project_slug}}', '-a',
+                           "{{cookiecutter.author_name}}", '-v' '0.0.1', '-l',
+                           'rst', '--master', 'index', '--sep', '--dot=.',
+                           '--ext-autodoc', '--ext-todo', '--ext-coverage',
+                           '--ext-viewcode', '--makefile', 'docs'])
 
 
 create_gh_repo()
