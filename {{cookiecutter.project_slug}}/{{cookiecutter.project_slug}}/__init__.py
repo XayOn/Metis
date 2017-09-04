@@ -14,4 +14,4 @@ def main():
     Usage: {{cookiecutter.project_slug}} [options]
     """
     options = docopt(main.__doc__)
-    print(options)
+    return options
