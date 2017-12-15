@@ -1,5 +1,27 @@
-{{cookiecutter.package_name}}
+{{cookiecutter.project_name}}
 -----------------------------
+
+.. image:: https://travis-ci.org/{{cookiecutter.github_username}}/{{cookiecutter.project_slug}}.svg?branch=master
+    :target: https://travis-ci.org/{{cookiecutter.github_username}}/{{cookiecutter.project_slug}}
+
+.. image:: https://coveralls.io/repos/github/{{cookiecutter.github_username}}/{{cookiecutter.project_slug}}/badge.svg?branch=master
+ :target: https://coveralls.io/github/{{cookiecutter.github_username}}/{{cookiecutter.project_slug}}?branch=master
+
+.. image:: https://badge.fury.io/py/{{cookiecutter.project_slug}}.svg
+    :target: https://badge.fury.io/py/{{cookiecutter.project_slug}}
+
+{{cookiecutter.project_summary}}
+
+
+Usage
+-----
+
+::
+    {{cookiecutter.project_slug}}.
+
+    {{cookiecutter.project_summary}}
+
+    Usage: {{cookiecutter.project_slug}} [options]
 
 
 Distributing
@@ -24,7 +46,7 @@ If you don't need, or you're not actually using git + setuptools distribution
 system, you can enable PBR manual versioning by creating a METADATA file with
 content like::
 
-    Name: {{cookiecutter.package_slug}}
+    Name: {{cookiecutter.project_slug}}
     Version: 0.0.1
 
 Generating documentation
