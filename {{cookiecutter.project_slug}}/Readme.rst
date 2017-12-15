@@ -56,7 +56,7 @@ This package contains a extra-requires section specifiying doc dependencies.
 There's a special hook in place that will automatically install them whenever
 we try to build its dependencies, thus enabling us to simply execute::
 
-        pipenv run python setup.py sphinx_build
+        pipenv run python setup.py build_sphinx
 
 to install documentation dependencies and buildd HTML documentation in docs/build/
 
