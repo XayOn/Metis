@@ -1,1 +1,1 @@
-docopt
+tools/pip-requires

@@ -30,18 +30,23 @@ Usage
 
 First, get `cookiecutter <https://github.com/audreyr/cookiecutter>`_.::
 
-    pip install cookiecutter
+    pip install --user cookiecutter
 
 
 Now, execute it and answer its questions::
 
     cookiecutter https://github.com/XayOn/Metis
 
-And voilá, your github repository will be created and with the first push done.
+
+I recommend installing Pipenv, it'll handle virtualenvs and requirements for
+you::
+
+    pip install --user pipenv
 
 
-TODO
-----
+Now, go to your ``project_slug`` directory, for example "metis_test"::
 
-- Auto-convert your ``behave`` tests to github issues as user stories
-- Auto-setup project on travis and readthedocs
+    cd metis_test
+
+
+And have a look at its readme.
