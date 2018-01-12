@@ -15,6 +15,9 @@ def startenv():
 
     subprocess.check_call(['pip', 'install', '--user', 'pipenv'])
     subprocess.check_call(['pipenv', 'install', '--dev', 'behave'])
+    subprocess.check_call(['pipenv', 'install', '--dev', 'pytest'])
+    subprocess.check_call(['pipenv', 'install', '--dev', 'pytest-cov'])
+    subprocess.check_call(['pipenv', 'install', '--dev', 'pytest-flake8'])
     subprocess.check_call(['pipenv', 'install', 'docopt'])
     subprocess.check_call(['pipenv', 'lock'])
     subprocess.check_call(['pipenv', 'run', 'pip', 'install', '-e', '.[doc]'])

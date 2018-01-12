@@ -17,6 +17,7 @@ Usage
 -----
 
 ::
+
     {{cookiecutter.project_slug}}.
 
     {{cookiecutter.project_summary}}

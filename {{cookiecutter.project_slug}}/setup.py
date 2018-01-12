@@ -26,7 +26,7 @@ if action == "update_requirements":
     update_reqs()
     sys.exit(0)
 elif action == "build_sphinx":
-    subprocess.check_call('pip install -e ".[doc]"', shell=True)
+    subprocess.check_call('pipenv run pip install -e ".[doc]"', shell=True)
 elif 'dist' in action:
     update_reqs()
 
