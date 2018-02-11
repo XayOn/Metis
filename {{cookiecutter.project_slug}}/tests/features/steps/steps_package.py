@@ -6,8 +6,8 @@ def import_package(context):
     """Try to import the package. If an exception happened push to context."""
     context.exceptions = []
     try:
-        import {{cookiecutter.project_slug}}
-    except ImportError as excp:
+        import {{cookiecutter.project_slug}}  # noqa
+    except ImportError as excpt:
         context.exceptions = [excpt]
 
 
