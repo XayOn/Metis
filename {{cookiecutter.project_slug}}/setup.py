@@ -31,11 +31,5 @@ elif 'dist' in action:
     update_reqs()
 
 
-if action == 'docker':
-    subprocess.check_call(
-        'docker build --build-arg distfile={}'.format(sys.argv[2]), shell=True)
-    sys.exit(0)
-
-
 setup(setup_requires=['pbr>=1.9', 'setuptools>=17.1', 'pytest-runner'],
       pbr=True)
