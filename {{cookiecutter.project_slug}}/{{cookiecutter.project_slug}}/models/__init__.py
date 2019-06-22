@@ -1,3 +1,5 @@
+from contextlib import suppress
+import configparser
 import functools
 
 import aiohttp
@@ -7,9 +9,12 @@ import aiozipkin as az
 async def setup_models(app):
     """Setup models."""
     HTTPModel.app = app
-    zipkin_address = app['config']['monitoring']['zipkin_url']
-    app['tracer'] = None
 
+    zipkin_address = None
+    with suppress(configparser.NoSectionError):
+        zipkin_address = app['config'].get('monitoring', 'zipkin_url')
+
+    app['tracer'] = None
     if zipkin_address:
         # Only setup zipkin if it has been configured.
         # This way we avoid zipkin warnings

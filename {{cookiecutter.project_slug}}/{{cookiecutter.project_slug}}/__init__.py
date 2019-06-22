@@ -63,7 +63,7 @@ def get_subapp(prefix, config_file, debug):
     app = web.Application(router=SwaggerRouter(version_ui=3),
                           middlewares=[jsonify])
     setup_routes(app)
-    setup_models(app)
+    app.on_startup.append(setup_models)
     app.router._swagger_ui = prefix + 'apidoc/'
 
     app['config'] = configparser.ConfigParser()
