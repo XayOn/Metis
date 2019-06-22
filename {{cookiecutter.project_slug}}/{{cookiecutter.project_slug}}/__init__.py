@@ -68,8 +68,9 @@ async def init_tracer(app, tracer_key=APP_AIOZIPKIN_KEY):
     if zipkin_address:
         # Only setup zipkin if it has been configured.
         # This way we avoid zipkin warnings
+        name = __name__.split('.')[0]
         app[tracer_key] = await az.create(zipkin_address,
-                                          az.create_endpoint("AIOHTTP_CLIENT"))
+                                          az.create_endpoint(name))
 
 
 def setup_tracer(app,

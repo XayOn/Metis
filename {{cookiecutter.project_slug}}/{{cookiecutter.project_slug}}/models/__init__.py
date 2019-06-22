@@ -10,7 +10,6 @@ import aiohttp
 async def setup_models(app):
     """Setup models."""
     HTTPModel.app = app
-
     app['http_session'] = aiohttp.ClientSession()
 
 
@@ -19,15 +18,25 @@ class HTTPModel:
 
     app = None
 
+    def __init__(self, request):
+        """Setup request for this instance."""
+        self.request = request
+
     @classmethod
-    def set_headers(cls):
+    def set_headers(self):
         """Set default headers.
 
-        Dont forget to call this method with super() on subclasses, otherwise
-        aiozipkin tracing would be lost
+        Dont forget to call this method with super() on subclasses,
+        otherwise aiozipkin tracing would be lost
         """
-        if cls.app[APP_AIOZIPKIN_KEY]:
-            with cls.app[APP_AIOZIPKIN_KEY].new_trace() as span:
+        if self.request.headers.get('SAMPLED_ID_HEADER'):
+            # Relay aiozipkin headers if they exist.
+            hdrs = (az.helpers.TRACE_ID_HEADER, az.helpers.SPAN_ID_HEADER,
+                    az.helpers.PARENT_ID_HEADER, az.helpers.FLAGS_HEADER,
+                    az.helpers.SAMPLED_ID_HEADER, az.helpers.SINGLE_HEADER)
+            return {a: b for a, b in self.request.headers.items() if a in hdrs}
+        if self.app[APP_AIOZIPKIN_KEY]:
+            with self.app[APP_AIOZIPKIN_KEY].new_trace(sampled=True) as span:
                 span.kind(az.CLIENT)
                 return span.context.make_headers()
         return {}
