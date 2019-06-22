@@ -21,6 +21,7 @@ This package contains a cookiecutter that will set up a few things for you:
 - Start a project with `behave <http://pythonhosted.org/behave/>`_ to start
   with BDD.
 - Add a skeleton for unit tests
+- Add a status page
 - Start with a python package
 - Set up tox with python3.5 (add more if you want!)
 - Add travis config, github goodies and readthedocs config
@@ -36,13 +37,6 @@ First, get `cookiecutter <https://github.com/audreyr/cookiecutter>`_.::
 Now, execute it and answer its questions::
 
     cookiecutter https://github.com/XayOn/Metis
-
-
-I recommend installing Pipenv, it'll handle virtualenvs and requirements for
-you::
-
-    pip install --user pipenv
-
 
 Now, go to your ``project_slug`` directory, for example "metis_test"::
 

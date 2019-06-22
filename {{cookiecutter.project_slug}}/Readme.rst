@@ -1,95 +1,58 @@
 {{cookiecutter.project_name}}
------------------------------
+---------------------------------------------------
 
-.. image:: https://travis-ci.org/{{cookiecutter.github_username}}/{{cookiecutter.project_slug}}.svg?branch=master
-    :target: https://travis-ci.org/{{cookiecutter.github_username}}/{{cookiecutter.project_slug}}
+{{cookiecutter.project_description}}
 
-.. image:: https://coveralls.io/repos/github/{{cookiecutter.github_username}}/{{cookiecutter.project_slug}}/badge.svg?branch=master
- :target: https://coveralls.io/github/{{cookiecutter.github_username}}/{{cookiecutter.project_slug}}?branch=master
+Running tests
+--------------
 
-.. image:: https://badge.fury.io/py/{{cookiecutter.project_slug}}.svg
-    :target: https://badge.fury.io/py/{{cookiecutter.project_slug}}
+This project will automatically try to run the tests using tox each time you
+make a git push.
 
-{{cookiecutter.project_summary}}
+To manually execute them, just run tox::
+
+   tox
 
 
-Usage
------
+Versioning
+-----------
 
-::
+API Versioning is automatic based on the software's version, so be careful with
+making major releases
 
-    {{cookiecutter.project_slug}}.
+Making a semver release is automatic with git flow and hooks. To do so, just
+execute git flow release with the semver keyword for the type of release you
+want to do, for example::
 
-    {{cookiecutter.project_summary}}
-
-    Usage: {{cookiecutter.project_slug}} [options]
+   git flow release major
 
 
 Distributing
-------------
+-------------
 
-Distribution may be done in the usual setuptools way.
-If you don't want to use pipenv, just use requirements.txt file as usual and
-remove Pipfile, setup.py will auto-detect Pipfile removal and won't try to
-update requirements.
+This project uses poetry, poetry supports publishing projects to pypi and
+making packages out-of-the-box::
 
-Note that, to enforce compatibility between PBR and Pipenv, this updates the
-tools/pip-requires and tools/test-requires files each time you do a *dist*
-command
-
-General notes
---------------
-
-This package uses PBR and pipenv.
-Pipenv can be easily replaced by a virtualenv by keeping requirements.txt
-instead of using pipenv flow.
-If you don't need, or you're not actually using git + setuptools distribution
-system, you can enable PBR manual versioning by creating a METADATA file with
-content like::
-
-    Name: {{cookiecutter.project_slug}}
-    Version: 0.0.1
-
-Generating documentation
-------------------------
-
-This package contains a extra-requires section specifiying doc dependencies.
-There's a special hook in place that will automatically install them whenever
-we try to build its dependencies, thus enabling us to simply execute::
-
-        pipenv run python setup.py build_sphinx
-
-to install documentation dependencies and buildd HTML documentation in docs/build/
+   poetry build
+   poetry publish
 
 
-Passing tests
---------------
+Executing the service
+---------------------
 
-Running tests should always be done inside pipenv.
-This package uses behave for TDD and pytest for unit tests, you can execute non-wip
-tests and behavioral tests using::
+To execute the service in development mode, use::
 
-        pipenv run python setup.py test
+   poetry run adev runserver {{cookiecutter.project_slug}}/__init__.py
 
 
-Docker
-------
+This will enable autoreload.
 
-This package can be run with docker.
+Building docker
+----------------
 
-Default entry_point will be executed ({{cookiecutter.project_slug}}) by default
+This service is able to read the port and host to be executed on from
+environment variables.
 
-This builds the docker for a SPECIFIC distributable release, that you need to
-have previously built.
+To use this feature, just pass port and host as env vars with docker run::
 
-For this, do a release::
-
-    python setup.py sdist
-
-Grab the redistributable files::
-
-    distrib=($(/bin/ls -t dist))
-
-Now run docker build with it::
-
-    docker build --build-arg distfile=${distrib[1]}
+   docker run {{cookiecutter.project_slug}} -e port=8080 -e host=0.0.0.0
