@@ -1,26 +1,15 @@
-from contextlib import suppress
 import configparser
 import functools
 
-import aiohttp
 import aiozipkin as az
+from aiozipkin.aiohttp_helpers import APP_AIOZIPKIN_KEY
+
+import aiohttp
 
 
 async def setup_models(app):
     """Setup models."""
     HTTPModel.app = app
-
-    zipkin_address = None
-    with suppress(configparser.NoSectionError):
-        zipkin_address = app['config'].get('monitoring', 'zipkin_url')
-
-    app['tracer'] = None
-    if zipkin_address:
-        # Only setup zipkin if it has been configured.
-        # This way we avoid zipkin warnings
-        app['tracer'] = await az.create(zipkin_address,
-                                        az.create_endpoint("AIOHTTP_CLIENT"))
-        az.setup(app, app['tracer'])
 
     app['http_session'] = aiohttp.ClientSession()
 
@@ -37,8 +26,8 @@ class HTTPModel:
         Dont forget to call this method with super() on subclasses, otherwise
         aiozipkin tracing would be lost
         """
-        if cls.app['tracer']:
-            with cls.app['tracer'].new_trace() as span:
+        if cls.app[APP_AIOZIPKIN_KEY]:
+            with cls.app[APP_AIOZIPKIN_KEY].new_trace() as span:
                 span.kind(az.CLIENT)
                 return span.context.make_headers()
         return {}
@@ -70,6 +59,6 @@ class HTTPModel:
             headers=self.set_headers())
 
     def __getattribute__(self, attr):
-        if attr in aiohttp.hdrs.METH_ALL:
-            return functools.partial(self.send_action, attr)
+        if attr.upper() in aiohttp.hdrs.METH_ALL:
+            return functools.partial(self.send_action, attr.upper())
         return super().__getattribute__(attr)

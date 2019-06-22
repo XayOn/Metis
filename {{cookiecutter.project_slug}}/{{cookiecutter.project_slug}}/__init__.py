@@ -8,6 +8,7 @@ Setup automatically:
     - API versioning with pyproject version
 """
 from pathlib import Path
+from contextlib import suppress
 import asyncio
 import configparser
 import sys
@@ -23,6 +24,11 @@ from aiohttp import web
 from aiohttp_apiset import SwaggerRouter
 from aiohttp_apiset.middlewares import jsonify
 import aiohttp
+
+import aiozipkin as az
+from aiozipkin.aiohttp_helpers import APP_AIOZIPKIN_KEY
+from aiozipkin.aiohttp_helpers import REQUEST_AIOZIPKIN_KEY
+from aiozipkin.aiohttp_helpers import middleware_maker
 
 from cleo import Command
 from cleo import Application
@@ -52,6 +58,38 @@ async def log_middleware(request, handler):
     return await handler(request)
 
 
+async def init_tracer(app, tracer_key=APP_AIOZIPKIN_KEY):
+    """Async init tracer."""
+    zipkin_address = None
+    with suppress(configparser.NoSectionError):
+        zipkin_address = app['config'].get('monitoring', 'zipkin_url')
+
+    app[tracer_key] = None
+    if zipkin_address:
+        # Only setup zipkin if it has been configured.
+        # This way we avoid zipkin warnings
+        app[tracer_key] = await az.create(zipkin_address,
+                                          az.create_endpoint("AIOHTTP_CLIENT"))
+
+
+def setup_tracer(app,
+                 tracer_key=APP_AIOZIPKIN_KEY,
+                 skip_routes=None,
+                 request_key=REQUEST_AIOZIPKIN_KEY):
+    mdwr = middleware_maker(skip_routes=skip_routes,
+                            tracer_key=tracer_key,
+                            request_key=request_key)
+    app.middlewares.append(mdwr)
+
+    # register cleanup signal to close zipkin transport connections
+    async def close_aiozipkin(app: Application) -> None:
+        await app[tracer_key].close()
+
+    app.on_cleanup.append(close_aiozipkin)
+
+    return app
+
+
 def get_subapp(prefix, config_file, debug):
     """Return a main app object.
 
@@ -63,7 +101,9 @@ def get_subapp(prefix, config_file, debug):
     app = web.Application(router=SwaggerRouter(version_ui=3),
                           middlewares=[jsonify])
     setup_routes(app)
+    setup_tracer(app)
     app.on_startup.append(setup_models)
+    app.on_startup.append(init_tracer)
     app.router._swagger_ui = prefix + 'apidoc/'
 
     app['config'] = configparser.ConfigParser()
@@ -88,7 +128,7 @@ def get_app(config='etc/config.ini', debug=False):
 
 
 class ServerCommand(Command):
-    """Base project
+    """Base project.
 
     start_server
         {--host=0.0.0.0 : Host to listen on}
