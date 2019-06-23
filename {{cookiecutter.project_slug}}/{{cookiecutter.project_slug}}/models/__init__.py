@@ -59,11 +59,15 @@ class HTTPModel:
         """
         return self.app['config'][self.service_name]
 
+    def get_url(self, endpoint):
+        """Extract URL for a specific endpoint."""
+        return self.config['url'].format(endpoint=endpoint)
+
     async def send_action(self, method, endpoint, data):
         """Send action against the service."""
         return await self.app['http_session'].request(
             method.upper(),
-            self.config['url'].format(endpoint=endpoint),
+            self.get_url(endpoint),
             json=data,
             headers=self.set_headers())
 
