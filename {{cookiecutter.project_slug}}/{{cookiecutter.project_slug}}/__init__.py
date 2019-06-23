@@ -2,10 +2,14 @@
 
 Setup automatically:
 
-    - logging
-    - tracing
-    - routes
-    - API versioning with pyproject version
+    - logging with pygogo
+    - tracing with aiozipking
+    - routing and API documentation with openapi
+    - API versioning using project's version
+    - Multiple service commands:
+        - start_server
+        - check_status (used by Docker health)
+
 """
 from pathlib import Path
 from contextlib import suppress
