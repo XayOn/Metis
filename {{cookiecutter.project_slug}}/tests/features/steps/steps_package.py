@@ -3,7 +3,10 @@ from behave import when, then
 
 @when('I import the package {{cookiecutter.project_slug}}')
 def import_package(context):
-    """Try to import the package. If an exception happened push to context."""
+    """Try to import the package.
+
+    If an exception happened push to context.
+    """
     context.exceptions = []
     try:
         import {{cookiecutter.project_slug}}  # noqa

@@ -84,7 +84,8 @@ def setup_tracer(app,
 
     # register cleanup signal to close zipkin transport connections
     async def close_aiozipkin(app: Application) -> None:
-        await app[tracer_key].close()
+        if APP_AIOZIPKIN_KEY in app and app[APP_AIOZIPKIN_KEY]:
+            await app[APP_AIOZIPKIN_KEY].close()
 
     app.on_cleanup.append(close_aiozipkin)
 
