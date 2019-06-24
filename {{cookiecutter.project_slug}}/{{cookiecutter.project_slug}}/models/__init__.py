@@ -34,7 +34,8 @@ class HTTPModel:
                     az.helpers.PARENT_ID_HEADER, az.helpers.FLAGS_HEADER,
                     az.helpers.SAMPLED_ID_HEADER)
             return {a: b for a, b in self.request.headers.items() if a in hdrs}
-        if self.app[APP_AIOZIPKIN_KEY]:
+        if self.app.get(APP_AIOZIPKIN_KEY):  # pragma: nocover
+            # TODO: Add mocked tests for trace generation
             with self.app[APP_AIOZIPKIN_KEY].new_trace(sampled=True) as span:
                 span.kind(az.CLIENT)
                 return span.context.make_headers()

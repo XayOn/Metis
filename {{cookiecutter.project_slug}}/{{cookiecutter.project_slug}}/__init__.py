@@ -44,16 +44,18 @@ from .models import setup_models
 
 warnings.filterwarnings('ignore', category=yaml.YAMLLoadWarning)
 
+MAIN_DIR = Path(__file__).parent.parent
 
-def get_app_version(prefix):
+
+def get_app_version(prefix):  # pragma: nocover
     """Get app version for automatic versioning."""
-    pyproject = toml.load(Path(__file__).parent.parent / 'pyproject.toml')
+    pyproject = toml.load(MAIN_DIR / 'pyproject.toml')
     version = semver.parse(pyproject['tool']['poetry']['version'])['major']
     return f'{prefix}{version}'
 
 
 @web.middleware
-async def log_middleware(request, handler):
+async def log_middleware(request, handler):  # pragma: nocover
     """Logging middleware, setups a uuid4 for each request.
 
     This allows us to trace requests between different services.
@@ -62,7 +64,7 @@ async def log_middleware(request, handler):
     return await handler(request)
 
 
-async def init_tracer(app, tracer_key=APP_AIOZIPKIN_KEY):
+async def init_tracer(app, tracer_key=APP_AIOZIPKIN_KEY):  # pragma: nocover
     """Async init tracer."""
     zipkin_address = None
     with suppress(configparser.NoSectionError):
@@ -80,7 +82,7 @@ async def init_tracer(app, tracer_key=APP_AIOZIPKIN_KEY):
 def setup_tracer(app,
                  tracer_key=APP_AIOZIPKIN_KEY,
                  skip_routes=None,
-                 request_key=REQUEST_AIOZIPKIN_KEY):
+                 request_key=REQUEST_AIOZIPKIN_KEY):  # pragma: nocover
     mdwr = middleware_maker(skip_routes=skip_routes,
                             tracer_key=tracer_key,
                             request_key=request_key)
@@ -96,7 +98,7 @@ def setup_tracer(app,
     return app
 
 
-def get_subapp(prefix, config_file, debug):
+def get_subapp(prefix, config_file, debug):  # pragma: nocover
     """Return a main app object.
 
     - Setup configuration
@@ -131,7 +133,7 @@ def get_subapp(prefix, config_file, debug):
     return app
 
 
-def get_app(config='etc/config.ini', debug=False):
+def get_app(config='etc/config.ini', debug=False):  # pragma: nocover
     """Get app."""
     prefix = f'/api/{get_app_version("v")}/'
     sub_app = get_subapp(prefix, config, debug)
@@ -141,7 +143,7 @@ def get_app(config='etc/config.ini', debug=False):
     return app
 
 
-class ServerCommand(Command):
+class ServerCommand(Command):  # pragma: nocover
     """Base project.
 
     start_server
@@ -159,7 +161,7 @@ class ServerCommand(Command):
         web.run_app(app, host, port)
 
 
-class StatusCommand(Command):
+class StatusCommand(Command):  # pragma: nocover
     """Check service status.
 
     check_status
@@ -185,7 +187,7 @@ class StatusCommand(Command):
         sys.exit(response['status'])
 
 
-def main():
+def main():  # pragma: nocover
     """Main."""
     application = Application()
     application.add(ServerCommand())
