@@ -16,15 +16,17 @@ Metis - Software craftmanship made right on :octocat:
 "skill," or "craft"), mother of wisdom and deep tought on ancient greek
 religion.
 
-This package contains a cookiecutter that will set up a few things for you:
+This package will setup an API service based on aiohttp with a few goodies:
 
-- Start a project with `behave <http://pythonhosted.org/behave/>`_ to start
-  with BDD.
-- Add a skeleton for unit tests
-- Add a status page
-- Start with a python package
-- Set up tox with python3.5 (add more if you want!)
-- Add travis config, github goodies and readthedocs config
+- Organised project structure with poetry
+- Automatic *API* versioning with semver and git-hooks
+- Testable HTTP "models" that act as connections to other services
+- Inter-service automatic tracing with zipking. Automatically propagates when using HTTP models.
+- Behave, pytest and hypothesis, and helpers to quickly use them to test your API
+- Direct swagger support with aiohttp-apiset
+- Docker with healtcheck automatic command
+- Travis configuration with tox
+- ReadTheDocs configuration + sphinx enabled by default
 
 Usage
 -----
