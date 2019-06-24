@@ -106,18 +106,26 @@ def get_subapp(prefix, config_file, debug):
 
     app = web.Application(router=SwaggerRouter(version_ui=3),
                           middlewares=[jsonify])
-    setup_routes(app)
-    setup_tracer(app)
-    app.on_startup.append(setup_models)
-    app.on_startup.append(init_tracer)
-    app.router._swagger_ui = prefix + 'apidoc/'
 
     app['config'] = configparser.ConfigParser()
     app['config'].read(config_file)
+
     app['logger'] = pygogo.Gogo(
         __name__,
         low_formatter=pygogo.formatters.structured_formatter,
         verbose=debug)
+
+    setup_routes(app)
+    with suppress(configparser.NoSectionError):
+        if app['config'].get('monitoring', 'zipkin_url'):
+            setup_tracer(app)
+
+    app.on_startup.append(setup_models)
+    app.on_startup.append(init_tracer)
+
+    # Aiohttp-apiset fix to make it work on subapps with prefix
+    app.router._swagger_ui = prefix + 'apidoc/'
+
     app['logger'].get_logger().info(f'Swagger available on {prefix}apidoc/')
 
     return app

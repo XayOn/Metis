@@ -22,14 +22,13 @@ class HTTPModel:
         """Setup request for this instance."""
         self.request = request
 
-    @classmethod
     def set_headers(self):
         """Set default headers.
 
         Dont forget to call this method with super() on subclasses,
         otherwise aiozipkin tracing would be lost
         """
-        if self.request.headers.get('SAMPLED_ID_HEADER'):
+        if self.request.headers.get(az.helpers.SAMPLED_ID_HEADER):
             # Relay aiozipkin headers if they exist.
             hdrs = (az.helpers.TRACE_ID_HEADER, az.helpers.SPAN_ID_HEADER,
                     az.helpers.PARENT_ID_HEADER, az.helpers.FLAGS_HEADER,
