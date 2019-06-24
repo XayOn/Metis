@@ -32,7 +32,7 @@ class HTTPModel:
             # Relay aiozipkin headers if they exist.
             hdrs = (az.helpers.TRACE_ID_HEADER, az.helpers.SPAN_ID_HEADER,
                     az.helpers.PARENT_ID_HEADER, az.helpers.FLAGS_HEADER,
-                    az.helpers.SAMPLED_ID_HEADER, az.helpers.SINGLE_HEADER)
+                    az.helpers.SAMPLED_ID_HEADER)
             return {a: b for a, b in self.request.headers.items() if a in hdrs}
         if self.app[APP_AIOZIPKIN_KEY]:
             with self.app[APP_AIOZIPKIN_KEY].new_trace(sampled=True) as span:
