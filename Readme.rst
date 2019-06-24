@@ -9,9 +9,6 @@ Metis - Software craftmanship made right on :octocat:
 .. image:: https://coveralls.io/repos/github/XayOn/Metis/badge.svg?branch=master
  :target: https://coveralls.io/github/XayOn/Metis?branch=master
 
-.. image:: https://badge.fury.io/py/metis.svg
-    :target: https://badge.fury.io/py/metis
-
 `Metis <https://en.wikipedia.org/wiki/Metis_(mythology)>`_, (Μῆτις, "wisdom,"
 "skill," or "craft"), mother of wisdom and deep tought on ancient greek
 religion.
