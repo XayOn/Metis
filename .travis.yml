@@ -5,6 +5,7 @@ python: "3.7"
 
 install:
     - pip install tox
+    - pip install poetry
     - pip install cookiecutter
     - pip install coveralls
 
