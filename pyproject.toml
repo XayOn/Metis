@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "metis"
+version = "0.1.0"
+description = "Opinionated micro-services oriented framework. Based on aiohttp"
+authors = ["David Francos Cuartero <me@davidfrancos.net>"]
+license = "GPL3+"
+readme = "Readme.rst"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+cleo = "^0.8.1"
+loguru = "^0.5.3"
+odmantic = "^0.3.1"
+aiohttp-swagger3 = "^0.5.1"
+environs = "^9.2.0"
+semver = "^2.13.0"
+aiohttp-request = "^0.0.2"
+sentry-sdk = "^0.19.4"
+aiozipkin = "^1.0.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+metis = "metis:main"
