@@ -22,18 +22,16 @@ class ServeCommand(Command):
         method
 
         Remember to not override the docstring on the class unless you specify
-        a valid cleo one and override this handler. For example::
+        a valid cleo one and override this handler. For example
 
-            class MyApp(Application):
-                def routes(self):
-                    self.add_routes(
-                        [web.get('foo', my_handler),
-                         web.post('bar', my_other)])
+        ..code :: python
 
-            class MyCustomStartServerCommand(Application):
+            class MyCustomStartServerCommand(ServeCommand):
                 def get_app(self):
-                    app = MyApp('appname')
+                    '''Return app'''
+                    app = MetisApplication('appname')
                     app.aiohttp_application.on_startup.append(setup_something)
+                    app.add_routes([web.post('foo', request_handler)])
                     return app
 
             Note that all models are automatically usable trough env-variables

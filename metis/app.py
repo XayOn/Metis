@@ -1,4 +1,3 @@
-import uuid
 from importlib import resources, metadata
 from contextlib import suppress
 from functools import cached_property
@@ -11,27 +10,10 @@ from aiozipkin.aiohttp_helpers import APP_AIOZIPKIN_KEY
 import aiohttp
 
 from .metis_logging import MetisLogger
-from .model import HTTPModel
+from .model import HTTPModel, MongoModel
 
 from environs import Env
 import semver
-
-
-@aiohttp.web.middleware
-async def log_middleware(request, handler):
-    """Use standard X-Request-ID header to setup logging
-
-    (see https://stackoverflow.com/questions/25433258/)
-
-    Don't forget to add X-Request-ID to redirect_headers setting
-
-    TODO: Add a catching mechanism based on X-Request-ID to ensure idempotency.
-    """
-    request['X-Request-ID'] = request.headers.get('X-Request-ID',
-                                                  uuid.uuid4().hex)
-    request['logger'] = request.app['logger'].bind(
-        request_id=request['X-Request-ID'])
-    return await handler(request)
 
 
 class MetisApplication:
@@ -99,7 +81,7 @@ class MetisApplication:
             return [YourMiddleware(), *super().middlewares]
 
         """
-        return [*MetisLogger.get_middlewares(self), log_middleware]
+        return MetisLogger.get_middlewares(self)
 
     @property
     def prefix(self):
@@ -122,6 +104,7 @@ class MetisApplication:
                 await app[APP_AIOZIPKIN_KEY].close()
 
         app.on_startup.append(HTTPModel.setup)
+        app.on_startup.append(MongoModel.setup)
         app.on_cleanup.append(close_aiozipkin)
         app['logger'] = self.logger
         app['application'] = self
