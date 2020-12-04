@@ -1,19 +1,34 @@
+import platform
 from metis.cli import ServeCommand
 from metis.app import MetisApplication
-from metis.model import HTTPModel
+from metis.model import HTTPModel, MongoModel
 from cleo import Application
+from laozi import Laozi
 from aiohttp import web
 
 
 class HTTPBin(HTTPModel):
-    """Httpbin base client."""
     def status(self):
-        """Inter-service status check
-
-        If a status method is defined, it will be called each time the /status
-        endpoint of this service is called.
-        """
         return self.post('post', {1: 2})['json']['1'] == 2
+
+
+class HTTPBinResponses(MongoModel):
+    name: str
+    response: dict
+
+
+MAPPING = {'starting_HTTPBin().post': {'message': 'starting_httpbin_request'}}
+
+
+def custom_formatter(record):
+    """In case you want to map the not-so-nice automatic debug messages
+
+    This also illustrates a different logging custom format printing all extra
+    variables.
+    """
+    record['extra'].update(MAPPING.get(record['message'], record['message']))
+    record['extra']['splunk'] = Laozi.parse(record)
+    return "{extra[splunk]}\n"
 
 
 async def handler(request):
@@ -29,7 +44,16 @@ async def handler(request):
         description: Example handler
     """
     request['logger'].debug("Example debug log")
-    return web.json_response({'ok': await HTTPBin().post('post', {1: 2})})
+    resp = await HTTPBin().post('post', {1: 2})
+    await HTTPBinResponses(name='ok', response=resp).save()
+    return web.json_response({'ok': resp})
+
+
+class CustomLogApplication(MetisApplication):
+    def setup_logger(self, logger):
+        logger.add('{platform.node()}.info',
+                   format=custom_formatter,
+                   level='DEBUG')
 
 
 class MyCustomStartServerCommand(ServeCommand):
@@ -38,7 +62,7 @@ class MyCustomStartServerCommand(ServeCommand):
 
         Configure routes and so on here.
         """
-        app = MetisApplication('metis')
+        app = CustomLogApplication('metis')
         app.add_routes([web.post('post', handler)])
         return app
 

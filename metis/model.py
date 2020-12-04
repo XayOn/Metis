@@ -8,6 +8,8 @@ from environs import Env
 
 import aiohttp
 from odmantic import Model as _ODModel
+from motor.motor_asyncio import AsyncIOMotorClient
+from odmantic import AIOEngine
 
 from .metis_logging import LoggableTaskMethodsClass
 
@@ -117,10 +119,6 @@ class HTTPModel(LoggableTaskMethodsClass):
 
 class MongoModel(_ODModel, LoggableTaskMethodsClass):
     """Mongomodel"""
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._instances = None
-
     @classmethod
     async def setup(cls, app):
         """Setup models.
@@ -128,32 +126,22 @@ class MongoModel(_ODModel, LoggableTaskMethodsClass):
         On an http model this implies creating an aiohttp clientsession that
         will be used later on (see `send_action`)
         """
-        if cls.__subclasses__():
-            cfg = app['application'].env
-            app['mongodb'] = AIOEngine(cfg('MONGODB'))
+        cfg = app['application'].env
+        if cfg('MONGODB', None):
+            client = AsyncIOMotorClient(cfg('MONGODB'))
+            app['mongodb'] = AIOEngine(motor_client=client)
 
     @classmethod
     async def count(cls, *queries):
         return await grequest.app['mongodb'].count(cls, *queries)
 
-    async def delete(self, data):
-        return await grequest.app['mongodb'].delete(self._instances[0])
+    async def delete(self):
+        return await grequest.app['mongodb'].delete(self)
 
-    async def find(self, *args, **kwargs):
-        self._instances = await grequest.app['mongodb'].find(
-            cls, *args, **kwargs)
-        return self._instances
+    @classmethod
+    async def find_one(cls, *args, **kwargs):
+        return await grequest.app['mongodb'].find_one(cls, *args, **kwargs)
 
-    async def find_one(self, *args, **kwargs):
-        instance = await grequest.app['mongodb'].find_one(cls, *args, **kwargs)
-        self._instances = [instance]
-        return self._instances
-
-    async def save_all(self):
-        await grequest.app['mongodb'].save_all(self._instances)
-
+    @classmethod
     async def save(self):
-        if len(self._instances) > 1:
-            raise RuntimeError(
-                'Trying to execute save() on a multi-element instance')
-        await grequest.app['mongodb'].save(self._instances[0])
+        await grequest.app['mongodb'].save(self)
